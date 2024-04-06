@@ -1,0 +1,17 @@
+services:
+  db:
+    image: postgres
+    restart: always
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U reapp"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    environment:
+      POSTGRES_USER: reapp
+      POSTGRES_PASSWORD_FILE: "@reappDev2024!"
+      POSTGRES_DB: reapp
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./data:/var/lib/postgresql/data
