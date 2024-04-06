@@ -1,9 +1,8 @@
-import * as express from "express"
-import { Request, Response } from "express"
+import express, { Express, Request, Response } from "express"
 
-const app = express()
+const app: Express = express()
 
-app.get("/", (req: Request, res: Response) => {
+app.get("/", (_: Request, res: Response) => {
   res.send("hello world!")
 })
 
