@@ -4,9 +4,9 @@
   "description": "The backend of the Reapp project",
   "main": "index.js",
   "scripts": {
-    "build": "tsc && tsc-alias",
+    "build": "tsup src",
     "start": "node dist/index.js",
-    "start:dev": "nodemon --watch 'src/' --exec 'ts-node -r tsconfig-paths/register src/index.ts' -e ts",
+    "start:dev": "tsx src/index.ts --watch",
     "prepare": "husky"
   },
   "keywords": [],
