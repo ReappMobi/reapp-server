@@ -1,7 +1,7 @@
 {
   "name": "reapp_backend",
   "version": "1.0.0",
-  "description": "",
+  "description": "The backend of the Reapp project",
   "main": "index.js",
   "scripts": {
     "build": "tsc && tsc-alias",
