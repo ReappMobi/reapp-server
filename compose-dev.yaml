@@ -1,6 +1,20 @@
 services:
+  reapp-dev:
+    conainer_name: reapp-dev
+    environment:
+      - NODE_ENV=development
+      - PORT=8080
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    volumes:
+      - .:/app
+    ports:
+      - "8080:8080"
+    command: npm run start:dev
+      
   db:
-    image: postgres
+    image: postgres:alpine
     restart: always
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U reapp"]
@@ -9,8 +23,9 @@ services:
       retries: 5
     environment:
       POSTGRES_USER: reapp
-      POSTGRES_PASSWORD_FILE: "@reappDev2024!"
+      POSTGRES_PASSWORD: "@reappDev2024!"
       POSTGRES_DB: reapp
+      POSTGRES_HOST_AUTH_METHOD: trust
     ports:
       - "5432:5432"
     volumes:
