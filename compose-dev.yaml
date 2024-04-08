@@ -8,7 +8,7 @@ networks:
 
 services:
   api:
-    conainer_name: api
+    container_name: api
     depends_on:
       - database
     env_file:
@@ -26,6 +26,7 @@ services:
       - database_network
       
   database:
+    container_name: database
     image: postgres:16
     restart: always
     healthcheck:
