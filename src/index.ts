@@ -1,13 +1,41 @@
-import express, { Express, Request, Response } from 'express';
+import { Server } from 'http';
 
-const app: Express = express();
+import app from '@app';
+import config from '@config/config';
+import logger from 'services/logger';
 
-const PORT = process.env.PORT || 8080;
+const { port, projectName } = config;
 
-app.get('/', (_: Request, res: Response) => {
-  res.send('hello world 2!');
+const server: Server = app.listen(port, (): void => {
+  logger.info(
+    `Aapplication '${projectName}' listens on http://localhost:${port}`,
+  );
 });
 
-app.listen(PORT, () =>
-  console.log(`🚀 Server is running on http://localhost:${PORT}`),
-);
+const exitHandler = (): void => {
+  if (!app) {
+    process.exit(1);
+  } else {
+    server.close(() => {
+      logger.info('Server closed');
+      process.exit(1);
+    });
+  }
+};
+
+const unexpectedErrorHandler = (): void => {
+  // TDOO: Implement error Handdler
+};
+
+process.on('exit', exitHandler);
+process.on('uncaughtException', unexpectedErrorHandler);
+process.on('unhandledRejection', (reason: Error) => {
+  throw reason;
+});
+
+process.on('SIGTERM', () => {
+  logger.info('SIGTERM received');
+  if (server) {
+    server.close();
+  }
+});
