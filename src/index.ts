@@ -3,6 +3,7 @@ import { Server } from 'http';
 import app from '@app';
 import config from '@config/config';
 import logger from 'services/logger';
+import { ErrorHandler } from 'utils/error-handler';
 
 const { port, projectName } = config;
 
@@ -23,11 +24,13 @@ const exitHandler = (): void => {
   }
 };
 
-const unexpectedErrorHandler = (): void => {
-  // TDOO: Implement error Handdler
+const unexpectedErrorHandler = (error: Error): void => {
+  ErrorHandler.handle(error);
+  if (!ErrorHandler.isTrustedError(error)) {
+    exitHandler();
+  }
 };
 
-process.on('exit', exitHandler);
 process.on('uncaughtException', unexpectedErrorHandler);
 process.on('unhandledRejection', (reason: Error) => {
   throw reason;
