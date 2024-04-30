@@ -1,5 +1,5 @@
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-class AppError extends Error {
+export class AppError extends Error {
   public readonly name: string;
   public readonly statusCode: number;
   public readonly isOperational: boolean;
