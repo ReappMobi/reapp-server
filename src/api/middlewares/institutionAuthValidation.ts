@@ -1,6 +1,6 @@
 import { body, check } from 'express-validator';
 import prisma from '@services/client';
-import { validarCNPJ } from 'utils/validacaoCnpj';
+import { validateCNPJ } from 'utils/validations';
 import bcrypt from 'bcrypt';
 
 export const signUpValidation = () => {
@@ -10,14 +10,13 @@ export const signUpValidation = () => {
       .withMessage('Por favor, insira um email válido')
       .normalizeEmail()
       .trim()
-      .custom((value) => {
-        return prisma.institution
-          .findUnique({ where: { email: value } })
-          .then((user) => {
-            if (user) {
-              return Promise.reject(new Error('E-mail já está em uso'));
-            }
-          });
+      .custom(async (value) => {
+        const user = await prisma.institution.findUnique({
+          where: { email: value },
+        });
+        if (user) {
+          return Promise.reject(new Error('E-mail já está em uso'));
+        }
       }),
 
     body('password')
@@ -39,7 +38,7 @@ export const signUpValidation = () => {
       .exists({ checkFalsy: true })
       .withMessage('Você deve digitar o CNPJ')
       .custom(async (value) => {
-        if (!validarCNPJ(value)) {
+        if (!validateCNPJ(value)) {
           return Promise.reject(new Error('O CNPJ informado não é válido'));
         }
         const existCNPJ = await prisma.institution.findUnique({
@@ -72,18 +71,17 @@ export const signInValidation = () => {
       .withMessage('Por favor, insira um email válido')
       .normalizeEmail()
       .trim()
-      .custom((value) => {
-        return prisma.institution
-          .findUnique({ where: { email: value } })
-          .then((user) => {
-            if (!user) {
-              return Promise.reject(
-                new Error(
-                  'Falha no login. Por favor, verifique suas credenciais e tente novamente',
-                ),
-              );
-            }
-          });
+      .custom(async (value) => {
+        const user = await prisma.institution.findUnique({
+          where: { email: value },
+        });
+        if (!user) {
+          return Promise.reject(
+            new Error(
+              'Falha no login. Por favor, verifique suas credenciais e tente novamente',
+            ),
+          );
+        }
       }),
 
     body('password')
