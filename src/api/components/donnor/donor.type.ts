@@ -10,3 +10,13 @@ export type Donor = {
   uri: string;
   following_count: number;
 };
+
+export type DonorResponse = {
+  id: number;
+  email: string;
+  name: string;
+  avatar: string;
+  url: string;
+  uri: string;
+  following_count: number;
+};
