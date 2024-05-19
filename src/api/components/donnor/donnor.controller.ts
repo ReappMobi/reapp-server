@@ -1,14 +1,14 @@
 import { Request, Response, NextFunction } from 'express';
 
 import httpStatus from '@services/http-status';
-import { DonnorService } from './donnor.service';
+import { createDonnor } from './donnor.service';
+import { Donor } from './donor.type';
 
 export const donnor = {
   async createDonnor(request: Request, response: Response, next: NextFunction) {
-    const donnorService = new DonnorService();
-    const donnor = request.body;
+    const donnor = request.body as Donor;
     try {
-      const result = await donnorService.createDonnor(donnor);
+      const result = await createDonnor(donnor);
       response.status(httpStatus.CREATED);
       response.send(result);
     } catch (error) {

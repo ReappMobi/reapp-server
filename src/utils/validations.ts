@@ -1,4 +1,4 @@
-export function validarCNPJ(cnpj: string): boolean {
+export function validateCNPJ(cnpj: string): boolean {
   if (cnpj.length !== 14) return false;
 
   if (/^(\d)\1+$/.test(cnpj)) return false;
