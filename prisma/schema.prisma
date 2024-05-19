@@ -27,28 +27,19 @@ model Donnor {
 }
 
 model Institution {
-  id        Int                 @id @default(autoincrement())
-  createdAt DateTime            @default(now())
-  updatedAt DateTime            @updatedAt
-  email     String              @unique
-  password  String
-  name      String
-  phone     String
-  cnpj      String              @unique
-  profile   InstitutionProfile?
-}
-
-model InstitutionProfile {
-  id              Int         @id @default(autoincrement())
-  createdAt       DateTime    @default(now()) @map(name: "created_at")
-  updatedAt       DateTime    @updatedAt @map(name: "updated_at")
-  displayName     String      @map(name: "display_name")
+  id              Int      @id @default(autoincrement())
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  email           String   @unique
+  password        String
+  name            String
+  phone           String
+  cnpj            String   @unique
+  displayName     String   @map(name: "display_name")
   avatar          String?
   url             String?
   uri             String?
-  following_count Int         @default(0) // TODO: Make this a relation
-  followers_count Int         @default(0) // TODO: Make this a relation
-  institutionId   Int         @unique
-  donations       Int         @default(0)
-  institution     Institution @relation(fields: [institutionId], references: [id])
+  following_count Int      @default(0) // TODO: Make this a relation
+  followers_count Int      @default(0) // TODO: Make this a relation
+  donations       Int      @default(0)
 }
