@@ -21,6 +21,7 @@
     "@types/jsonwebtoken": "^9.0.6",
     "@types/node": "^20.12.2",
     "@types/supertest": "^6.0.2",
+    "@types/uuid": "^9.0.8",
     "@typescript-eslint/eslint-plugin": "^7.4.0",
     "@typescript-eslint/parser": "^7.4.0",
     "eslint": "^8.57.0",
@@ -43,6 +44,8 @@
     "express": "^4.19.2",
     "express-validator": "^7.0.1",
     "jsonwebtoken": "^9.0.2",
+    "mercadopago": "^2.0.9",
+    "uuid": "^9.0.1",
     "winston": "^3.13.0"
   }
 }
