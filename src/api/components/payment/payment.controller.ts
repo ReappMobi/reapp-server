@@ -29,4 +29,20 @@ export const payment = {
       next(error);
     }
   },
+  async paymentCallback(
+    request: Request,
+    response: Response,
+    next: NextFunction,
+  ) {
+    try {
+      const paymentService = new PaymentService();
+
+      await paymentService.paymentCallback(request.body);
+
+      response.status(HttpStatus.ACCEPTED);
+      response.send();
+    } catch (error) {
+      next(error);
+    }
+  },
 };
