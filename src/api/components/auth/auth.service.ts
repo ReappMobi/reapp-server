@@ -38,14 +38,18 @@ export const authenticate = async (data: AuthData) => {
         email,
       },
     })) as Donor;
-    userResponse = serializeDonorResponse(user as Donor);
+    if (user) {
+      userResponse = serializeDonorResponse(user as Donor);
+    }
   } else {
     user = (await prisma.institution.findUnique({
       where: {
         email,
       },
     })) as Institution;
-    userResponse = serializeInstitutionResponse(user as Institution);
+    if (user) {
+      userResponse = serializeInstitutionResponse(user as Institution);
+    }
   }
 
   if (!user) {
