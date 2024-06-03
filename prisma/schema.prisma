@@ -24,6 +24,8 @@ model Donnor {
   url             String?
   uri             String?
   following_count Int      @default(0) // TODO: Make this a relation
+  donations       Donation[]
+  donationIntents DonationIntent[]
 }
 
 model Institution {
@@ -42,4 +44,53 @@ model Institution {
   following_count Int      @default(0) // TODO: Make this a relation
   followers_count Int      @default(0) // TODO: Make this a relation
   donations       Int      @default(0)
+  projects        Project[]
+  donationsReceived      Donation[]
+  donationIntents DonationIntent[]
 }
+
+model Project {
+  id              Int          @id @default(autoincrement())
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
+  name            String
+  description     String
+  institution     Institution  @relation(fields: [institutionId], references: [id])
+  institutionId   Int
+  cover           String?      
+  video           String?
+  donations       Donation[]
+  donationIntents DonationIntent[]
+
+}
+
+
+model Donation {
+  id             Int           @id @default(autoincrement())
+  donor          Donnor         @relation(fields: [donorId], references: [id])
+  donorId        Int
+  amount         Decimal   @db.Decimal(10, 2)
+  date           DateTime  @default(now())
+  institution    Institution?  @relation(fields: [institutionId], references: [id])
+  institutionId  Int?
+  project        Project?      @relation(fields: [projectId], references: [id])
+  projectId      Int?
+
+}
+
+model DonationIntent {
+  id            Int       @id @default(autoincrement())
+  donorId       Int
+  amount        Decimal   @db.Decimal(10, 2)
+  createdAt     DateTime  @default(now())
+  status        String    @default("pending")
+  institutionId Int?      
+  projectId     Int?      
+  checkoutUrl   String
+  paymentId     String
+
+  user          Donnor      @relation(fields: [donorId], references: [id])
+  institution   Institution? @relation(fields: [institutionId], references: [id])
+  project       Project?  @relation(fields: [projectId], references: [id])
+}
+
