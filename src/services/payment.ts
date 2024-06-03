@@ -1,4 +1,4 @@
-import { MercadoPagoConfig, Preference } from 'mercadopago';
+import { MercadoPagoConfig, Preference, Payment } from 'mercadopago';
 import { v4 as uuidv4 } from 'uuid';
 
 const client = new MercadoPagoConfig({
@@ -30,6 +30,8 @@ export const handlePayment = async (intent: PaymentServiceIntentType) => {
       name: intent.username,
       email: intent.userEmail,
     },
+    notification_url: `${process.env.NGROK_URL_TEST}/api/payment/callback`,
+    external_reference: uuidv4(),
   };
 
   const response = await preference.create({
@@ -37,4 +39,12 @@ export const handlePayment = async (intent: PaymentServiceIntentType) => {
   });
 
   return response;
+};
+
+export const getPayment = async (id: string) => {
+  const paymentMP = new Payment(client);
+
+  const result = await paymentMP.get({ id: id });
+
+  return result;
 };
