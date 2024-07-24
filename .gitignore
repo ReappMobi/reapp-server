@@ -2,3 +2,5 @@ node_modules
 dist
 .env
 .env.docker
+.env.test
+.env.docker.test
