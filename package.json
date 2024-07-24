@@ -7,7 +7,10 @@
     "build": "tsup src",
     "start": "node dist/index.js",
     "start:dev": "tsx watch src/index.ts",
-    "prepare": "husky"
+    "prepare": "husky",
+    "test": "dotenvx run --env-file=.env.test -- vitest",
+    "test:init" : "dotenvx run --env-file=.env.test -- npx prisma db push",
+    "test:studio": "dotenvx run --env-file=.env.test -- npx prisma studio"
   },
   "type": "module",
   "keywords": [],
