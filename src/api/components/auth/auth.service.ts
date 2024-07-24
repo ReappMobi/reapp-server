@@ -29,7 +29,6 @@ export const authenticate = async (data: AuthData) => {
   }
 
   let userResponse: DonorResponse | InstitutionResponse | null = null;
-
   let user: Donor | Institution | null = null;
 
   if (isDonor) {
@@ -38,6 +37,9 @@ export const authenticate = async (data: AuthData) => {
         email,
       },
     })) as Donor;
+    if (!user) {
+      throw new AppError('Email ou senha incorretos', HttpStatus.BAD_REQUEST);
+    }
     userResponse = serializeDonorResponse(user as Donor);
   } else {
     user = (await prisma.institution.findUnique({
@@ -45,11 +47,10 @@ export const authenticate = async (data: AuthData) => {
         email,
       },
     })) as Institution;
+    if (!user) {
+      throw new AppError('Email ou senha incorretos', HttpStatus.BAD_REQUEST);
+    }
     userResponse = serializeInstitutionResponse(user as Institution);
-  }
-
-  if (!user) {
-    throw new AppError('Email ou senha incorretos', HttpStatus.BAD_REQUEST);
   }
 
   const passwordMatch = await bcrypt.compare(password, user.password);
