@@ -6,6 +6,7 @@
 
 generator client {
   provider = "prisma-client-js"
+  binaryTargets = ["native", "debian-openssl-3.0.x"]
 }
 
 datasource db {
@@ -20,12 +21,14 @@ model Donnor {
   email           String   @unique
   password        String
   name            String
+  phone           String?
   avatar          String?
   url             String?
   uri             String?
   following_count Int      @default(0) // TODO: Make this a relation
   donations       Donation[]
   donationIntents DonationIntent[]
+  likes           Like[]
 }
 
 model Institution {
@@ -37,14 +40,19 @@ model Institution {
   name            String
   phone           String
   cnpj            String   @unique
-  displayName     String   @map(name: "display_name")
+  category        String
+  state           String
+  city            String
   avatar          String?
   url             String?
   uri             String?
+  facebook        String?
+  instagram       String?
   following_count Int      @default(0) // TODO: Make this a relation
   followers_count Int      @default(0) // TODO: Make this a relation
   donations       Int      @default(0)
   projects        Project[]
+  posts           Post[]
   donationsReceived      Donation[]
   donationIntents DonationIntent[]
 }
@@ -92,5 +100,26 @@ model DonationIntent {
   user          Donnor      @relation(fields: [donorId], references: [id])
   institution   Institution? @relation(fields: [institutionId], references: [id])
   project       Project?  @relation(fields: [projectId], references: [id])
+}
+
+
+model Post {
+  id            Int          @id @default(autoincrement())
+  caption       String
+  imageUrl      String
+  institution   Institution  @relation(fields: [institutionId], references: [id])
+  institutionId Int
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+  likes         Like[] 
+}
+
+model Like {
+  id     Int      @id @default(autoincrement())
+  post   Post     @relation(fields: [postId], references: [id])
+  postId Int
+  donor   Donnor     @relation(fields: [donorId], references: [id])
+  donorId Int
+  createdAt DateTime @default(now())
 }
 
