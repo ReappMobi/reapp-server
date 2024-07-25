@@ -62,3 +62,18 @@ export const signUpValidation = () => {
       .trim(),
   ];
 };
+
+export const editInformationValidation = () => {
+  return [
+    body('phone')
+      .optional({ nullable: true }) // Permite que o campo seja opcional
+      .custom((value) => {
+        if (value && !/^[1-9]{2}9[0-9]{4}[0-9]{4}$/.test(value)) {
+          throw new Error('O telefone informado não é válido');
+        }
+        return true;
+      })
+      .withMessage('Você deve digitar um número de telefone válido')
+      .trim(),
+  ];
+};
