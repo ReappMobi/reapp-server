@@ -1,0 +1,1 @@
+ALTER TABLE "Donnor" ADD COLUMN "telephone" VARCHAR(255);
