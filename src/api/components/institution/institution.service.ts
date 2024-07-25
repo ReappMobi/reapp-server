@@ -1,19 +1,24 @@
 import { Prisma } from '@prisma/client';
-
+import admin from '@config/firebaseConfig';
 import prisma from '@services/client';
+import { serializeInstitutionResponse } from 'utils/serilizers';
+import { Institution } from '../institution/institution.types';
+
+interface Avatar {
+  originalname: string;
+  mimetype: string;
+  buffer: Buffer;
+}
+
+interface EditInformationData {
+  id: number;
+  avatar?: Avatar | string;
+}
 
 export class InstitutionService {
   public async institutionSignUp(institution: Prisma.InstitutionCreateInput) {
     const newInstitution = await prisma.institution.create({
       data: institution,
-      include: { profile: true },
-    });
-
-    const newInstitutionProfile = await prisma.institutionProfile.create({
-      data: {
-        displayName: institution.name,
-        institution: { connect: { id: newInstitution.id } },
-      },
     });
 
     return {
@@ -23,24 +28,65 @@ export class InstitutionService {
       phone: newInstitution.phone,
       cnpj: newInstitution.cnpj,
       createdAt: newInstitution.createdAt,
-      profile: newInstitutionProfile,
+      avatar: newInstitution.avatar,
+      state: newInstitution.state,
+      city: newInstitution.city,
+      category: newInstitution.category,
+      instagram: newInstitution.instagram,
+      facebook: newInstitution.facebook,
     };
   }
 
-  public async institutionSignIn(email: string) {
-    const institution = await prisma.institution.findUnique({
-      where: { email: email },
-      include: { profile: true },
-    });
+  public async institutionEditInformation(data: EditInformationData) {
+    if (data.avatar && typeof data.avatar !== 'string') {
+      const bucket = admin.storage().bucket();
+      const blob = bucket.file(data.avatar.originalname);
+      const blobStream = blob.createWriteStream({
+        metadata: {
+          contentType: data.avatar.mimetype,
+        },
+      });
 
-    return {
-      id: institution?.id,
-      name: institution?.name,
-      email: institution?.email,
-      phone: institution?.phone,
-      cnpj: institution?.cnpj,
-      createdAt: institution?.createdAt,
-      profile: institution?.profile,
-    };
+      blobStream.on('error', () => {
+        throw new Error(
+          'Erro na edição de informações, tente novamente mais tarde.',
+        );
+      });
+
+      const getUrl = new Promise<string>((resolve, reject) => {
+        blobStream.on('finish', async () => {
+          try {
+            const [publicUrl] = await blob.getSignedUrl({
+              action: 'read',
+              expires: '01-01-2100',
+            });
+            resolve(publicUrl);
+          } catch (error) {
+            reject(error);
+          }
+        });
+      });
+      blobStream.end(data.avatar.buffer);
+      const imageUrl = await getUrl;
+
+      data.avatar = imageUrl;
+    }
+
+    const updatedInstitution = await prisma.institution.update({
+      where: { id: data.id },
+      data: data,
+    });
+    return updatedInstitution;
+  }
+
+  public async getInstitutionById(id: number) {
+    const result = await prisma.institution.findUnique({ where: { id } });
+    const userResponse = serializeInstitutionResponse(result as Institution);
+    return userResponse;
+  }
+
+  public async getAllInstitutions() {
+    const result = await prisma.institution.findMany();
+    return result;
   }
 }
