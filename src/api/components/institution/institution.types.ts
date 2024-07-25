@@ -7,13 +7,17 @@ export type Institution = {
   name: string;
   phone: string;
   cnpj: string;
-  displayName: string;
+  category: string;
+  state: string;
+  city: string;
   avatar: string;
   url: string;
   uri: string;
   following_count: number;
   followers_count: number;
   donations: number;
+  facebook: string;
+  instagram: string;
 };
 
 export type InstitutionResponse = {
@@ -21,11 +25,15 @@ export type InstitutionResponse = {
   email: string;
   name: string;
   phone: string;
-  displayName: string;
   avatar: string;
+  state: string;
+  city: string;
   url: string;
   uri: string;
+  category: string;
   following_count: number;
   followers_count: number;
   donations: number;
+  facebook: string;
+  instagram: string;
 };
