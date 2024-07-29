@@ -7,6 +7,7 @@ import auth from '@components/auth/auth.router';
 import payment from '@components/payment/payment.router';
 import post from '@components/post/post.router';
 import project from '@components/project/project.router';
+import partner from '@components/partner/partner.router';
 
 const router: Router = Router();
 
@@ -17,5 +18,6 @@ router.use(auth);
 router.use(payment);
 router.use(post);
 router.use(project);
+router.use(partner);
 
 export default router;
