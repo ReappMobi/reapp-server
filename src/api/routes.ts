@@ -8,6 +8,7 @@ import payment from '@components/payment/payment.router';
 import post from '@components/post/post.router';
 import project from '@components/project/project.router';
 import partner from '@components/partner/partner.router';
+import collaborator from '@components/collaborator/collaborator.router';
 
 const router: Router = Router();
 
@@ -19,5 +20,6 @@ router.use(payment);
 router.use(post);
 router.use(project);
 router.use(partner);
+router.use(collaborator);
 
 export default router;
