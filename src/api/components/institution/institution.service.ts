@@ -31,7 +31,7 @@ export class InstitutionService {
       avatar: newInstitution.avatar,
       state: newInstitution.state,
       city: newInstitution.city,
-      category: newInstitution.category,
+      category: newInstitution.categoryId,
       instagram: newInstitution.instagram,
       facebook: newInstitution.facebook,
     };
@@ -80,13 +80,47 @@ export class InstitutionService {
   }
 
   public async getInstitutionById(id: number) {
-    const result = await prisma.institution.findUnique({ where: { id } });
-    const userResponse = serializeInstitutionResponse(result as Institution);
+    const result = await prisma.institution.findUnique({
+      where: { id },
+      include: {
+        category: {
+          select: {
+            name: true,
+          },
+        },
+      },
+    });
+
+    if (!result) {
+      throw new Error(`Institution with ID ${id} not found`);
+    }
+
+    const userResponse = serializeInstitutionResponse(
+      result as Institution & { category: { name: string } },
+    );
     return userResponse;
   }
 
   public async getAllInstitutions() {
-    const result = await prisma.institution.findMany();
+    const result = await prisma.institution.findMany({
+      include: {
+        category: {
+          select: {
+            name: true,
+          },
+        },
+      },
+    });
+
+    return result.map((institution) =>
+      serializeInstitutionResponse(
+        institution as Institution & { category: { name: string } },
+      ),
+    );
+  }
+
+  public async getInstitutionCategories() {
+    const result = await prisma.categoryInstitution.findMany();
     return result;
   }
 }
