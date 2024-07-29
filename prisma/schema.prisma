@@ -55,6 +55,7 @@ model Institution {
   donations       Int      @default(0)
   projects        Project[]
   posts           Post[]
+  partners        Partner[]
   donationsReceived      Donation[]
   donationIntents DonationIntent[]
 }
@@ -154,5 +155,15 @@ model Like {
   donor   Donnor     @relation(fields: [donorId], references: [id])
   donorId Int
   createdAt DateTime @default(now())
+}
+
+
+model Partner {
+  id     Int      @id @default(autoincrement())
+  name   String
+  avatar String
+  institutionId Int
+  institution   Institution  @relation(fields: [institutionId], references: [id])
+
 }
 
