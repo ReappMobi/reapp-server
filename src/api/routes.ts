@@ -9,6 +9,7 @@ import post from '@components/post/post.router';
 import project from '@components/project/project.router';
 import partner from '@components/partner/partner.router';
 import collaborator from '@components/collaborator/collaborator.router';
+import volunteer from '@components/volunteer/volunteer.router';
 
 const router: Router = Router();
 
@@ -21,5 +22,6 @@ router.use(post);
 router.use(project);
 router.use(partner);
 router.use(collaborator);
+router.use(volunteer);
 
 export default router;
