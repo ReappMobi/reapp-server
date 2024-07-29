@@ -27,7 +27,7 @@ export const serializeDonorResponse = (donor: Donor): DonorResponse => {
  * @returns JSON object
  */
 export const serializeInstitutionResponse = (
-  institution: Institution,
+  institution: Institution & { category?: { name: string } },
 ): InstitutionResponse => {
   return {
     id: institution.id,
@@ -41,7 +41,7 @@ export const serializeInstitutionResponse = (
     instagram: institution.instagram,
     url: institution.url,
     uri: institution.uri,
-    category: institution.category,
+    category: institution.category ? institution.category.name : null,
     following_count: institution.following_count,
     followers_count: institution.followers_count,
     donations: institution.donations,
