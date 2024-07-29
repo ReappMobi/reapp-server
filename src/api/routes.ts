@@ -6,6 +6,7 @@ import institution from '@components/institution/institution.router';
 import auth from '@components/auth/auth.router';
 import payment from '@components/payment/payment.router';
 import post from '@components/post/post.router';
+import project from '@components/project/project.router';
 
 const router: Router = Router();
 
@@ -15,5 +16,6 @@ router.use(institution);
 router.use(auth);
 router.use(payment);
 router.use(post);
+router.use(project);
 
 export default router;
