@@ -7,7 +7,7 @@ export type Institution = {
   name: string;
   phone: string;
   cnpj: string;
-  category: string;
+  categoryId: number;
   state: string;
   city: string;
   avatar: string;
@@ -30,7 +30,7 @@ export type InstitutionResponse = {
   city: string;
   url: string;
   uri: string;
-  category: string;
+  category: string | null;
   following_count: number;
   followers_count: number;
   donations: number;
