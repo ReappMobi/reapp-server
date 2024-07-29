@@ -27,7 +27,7 @@ export const institution = {
         cnpj,
         state,
         city,
-        category,
+        categoryId,
         facebook,
         instagram,
       } = request.body;
@@ -40,7 +40,7 @@ export const institution = {
         email,
         state,
         city,
-        category,
+        categoryId,
         ...(instagram && { instagram }),
         ...(facebook && { facebook }),
         password: hash,
@@ -114,6 +114,21 @@ export const institution = {
     try {
       const institutionService = new InstitutionService();
       const result = await institutionService.getAllInstitutions();
+      response.status(HttpStatus.OK);
+      response.send(result);
+    } catch (error) {
+      next(error);
+    }
+  },
+
+  async getInstitutionCategories(
+    request: Request,
+    response: Response,
+    next: NextFunction,
+  ) {
+    try {
+      const institutionService = new InstitutionService();
+      const result = await institutionService.getInstitutionCategories();
       response.status(HttpStatus.OK);
       response.send(result);
     } catch (error) {

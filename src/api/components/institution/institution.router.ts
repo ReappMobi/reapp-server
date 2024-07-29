@@ -25,6 +25,8 @@ router.patch(
   institution.editInformation,
 );
 
+router.get('/institution/categories', institution.getInstitutionCategories);
+
 router.get('/institution', verifyToken, institution.getAllInstitution);
 
 router.get('/institution/:id', verifyToken, institution.getInstitutionByid);
