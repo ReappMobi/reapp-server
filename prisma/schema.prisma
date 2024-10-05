@@ -1,0 +1,188 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  binaryTargets = ["native", "debian-openssl-3.0.x"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Donnor {
+  id              Int      @id @default(autoincrement())
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  email           String   @unique
+  password        String
+  name            String
+  phone           String?
+  avatar          String?
+  url             String?
+  uri             String?
+  following_count Int      @default(0) // TODO: Make this a relation
+  donations       Donation[]
+  donationIntents DonationIntent[]
+  likes           Like[]
+  favorites       FavoriteProject[]   
+}
+
+model Institution {
+  id              Int      @id @default(autoincrement())
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  email           String   @unique
+  password        String
+  name            String
+  phone           String
+  cnpj            String   @unique
+  categoryId      Int
+  category        CategoryInstitution  @relation(fields: [categoryId], references: [id])
+  state           String
+  city            String
+  avatar          String?
+  url             String?
+  uri             String?
+  facebook        String?
+  instagram       String?
+  following_count Int      @default(0) // TODO: Make this a relation
+  followers_count Int      @default(0) // TODO: Make this a relation
+  donations       Int      @default(0)
+  projects        Project[]
+  posts           Post[]
+  partners        Partner[]
+  volunteers      Volunteer[]
+  collaborators   Collaborator[]
+  donationsReceived      Donation[]
+  donationIntents DonationIntent[]
+}
+
+model Project {
+  id              Int              @id @default(autoincrement())
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+  name            String
+  subtitle        String
+  description     String
+  institution     Institution      @relation(fields: [institutionId], references: [id])
+  institutionId   Int
+  categoryId      Int
+  category        CategoryProject  @relation(fields: [categoryId], references: [id])
+  cover           String?
+  video           String?
+  donations       Donation[]
+  donationIntents DonationIntent[]
+  favorites      FavoriteProject[]       // Relacionamento com favoritos
+}
+
+model FavoriteProject {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  donorId   Int
+  projectId Int
+  user      Donnor     @relation(fields: [donorId], references: [id])
+  project   Project  @relation(fields: [projectId], references: [id])
+
+  @@unique([donorId, projectId]) // Garantir que um usuário possa favoritar um projeto apenas uma vez
+}
+
+model CategoryProject {
+  id          Int        @id @default(autoincrement())
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  name        String
+  projects    Project[] 
+
+}
+
+model CategoryInstitution {
+  id          Int        @id @default(autoincrement())
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  name        String
+  institutions  Institution[] 
+}
+
+
+model Donation {
+  id             Int           @id @default(autoincrement())
+  donor          Donnor         @relation(fields: [donorId], references: [id])
+  donorId        Int
+  amount         Decimal   @db.Decimal(10, 2)
+  date           DateTime  @default(now())
+  institution    Institution?  @relation(fields: [institutionId], references: [id])
+  institutionId  Int?
+  project        Project?      @relation(fields: [projectId], references: [id])
+  projectId      Int?
+
+}
+
+model DonationIntent {
+  id            Int       @id @default(autoincrement())
+  donorId       Int
+  amount        Decimal   @db.Decimal(10, 2)
+  createdAt     DateTime  @default(now())
+  status        String    @default("pending")
+  institutionId Int?      
+  projectId     Int?      
+  checkoutUrl   String
+  paymentId     String
+
+  user          Donnor      @relation(fields: [donorId], references: [id])
+  institution   Institution? @relation(fields: [institutionId], references: [id])
+  project       Project?  @relation(fields: [projectId], references: [id])
+}
+
+
+model Post {
+  id            Int          @id @default(autoincrement())
+  caption       String
+  imageUrl      String
+  institution   Institution  @relation(fields: [institutionId], references: [id])
+  institutionId Int
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+  likes         Like[] 
+}
+
+model Like {
+  id     Int      @id @default(autoincrement())
+  post   Post     @relation(fields: [postId], references: [id])
+  postId Int
+  donor   Donnor     @relation(fields: [donorId], references: [id])
+  donorId Int
+  createdAt DateTime @default(now())
+}
+
+
+model Partner {
+  id     Int      @id @default(autoincrement())
+  name   String
+  avatar String
+  institutionId Int
+  institution   Institution  @relation(fields: [institutionId], references: [id])
+
+}
+
+model Collaborator {
+  id     Int      @id @default(autoincrement())
+  name   String
+  avatar String
+  institutionId Int
+  institution   Institution  @relation(fields: [institutionId], references: [id])
+
+}
+
+model Volunteer {
+  id     Int      @id @default(autoincrement())
+  name   String
+  avatar String
+  institutionId Int
+  institution   Institution  @relation(fields: [institutionId], references: [id])
+}
+

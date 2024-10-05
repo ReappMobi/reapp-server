@@ -1,0 +1,43 @@
+version: '3.8'
+
+name: reapp
+
+networks:
+  database_network:
+    driver: bridge
+
+services:
+  api:
+    container_name: api
+    depends_on:
+      - database
+    env_file:
+      - .env.docker
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    volumes:
+      - .:/app
+    ports:
+      - 8080:8080
+    command: npm run start:dev
+    networks:
+      - database_network
+      
+  database:
+    container_name: database
+    image: postgres:16
+    restart: always
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U reapp"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    env_file:
+      - .env.docker
+    ports:
+      - 5432:5432
+    volumes:
+      - ./pg-data:/var/lib/postgresql/data
+    networks:
+      - database_network

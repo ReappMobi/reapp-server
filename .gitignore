@@ -1,2 +1,5 @@
 node_modules
 dist
+.env
+.env.docker
+auth-and-facebook-firebase-adminsdk-2s27n-c9588b416b.json

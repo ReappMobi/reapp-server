@@ -1,9 +1,44 @@
-import express, { Express, Request, Response } from 'express';
+import { Server } from 'http';
 
-const app: Express = express();
+import app from '@app';
+import config from '@config/config';
+import logger from 'services/logger';
+import { ErrorHandler } from 'utils/error-handler';
 
-app.get('/', (_: Request, res: Response) => {
-  res.send('hello world!');
+const { port, projectName } = config;
+
+const server: Server = app.listen(port, (): void => {
+  logger.info(
+    `Aapplication '${projectName}' listens on http://localhost:${port}`,
+  );
 });
 
-app.listen(3000, () => console.log('Listening on port 3000!'));
+const exitHandler = (): void => {
+  if (!app) {
+    process.exit(1);
+  } else {
+    server.close(() => {
+      logger.info('Server closed');
+      process.exit(1);
+    });
+  }
+};
+
+const unexpectedErrorHandler = (error: Error): void => {
+  ErrorHandler.handle(error);
+  if (!ErrorHandler.isTrustedError(error)) {
+    exitHandler();
+  }
+};
+
+process.on('uncaughtException', unexpectedErrorHandler);
+process.on('unhandledRejection', (reason: Error) => {
+  throw reason;
+});
+
+process.on('SIGTERM', () => {
+  logger.info('SIGTERM received');
+  if (server) {
+    server.close();
+  }
+});
